@@ -12,7 +12,7 @@ class homepage extends StatefulWidget {
 
 class _homepageState extends State<homepage> {
   String?name;
-  var box=Hive.openBox('namebox');
+  var box=Hive.openBox('name_box');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +32,9 @@ class _homepageState extends State<homepage> {
             },
           )),
           IconButton(onPressed: () {
-            if (name!=Null){
-              box.add(name);
+             if (name != null) {
+                        box.add(name);
+                        print('$name is Added into HiveBox');
               setState(() {
                 
               });
@@ -42,8 +43,7 @@ class _homepageState extends State<homepage> {
         ],),
         Expanded(child: ListView.builder(
           itemCount: box.length,
-          itemBuilder:
-         (context, index) {
+          itemBuilder:(context, index) {
           var name=box.getAt(index);
           return Card(
             child: Center(child: Text('$name'),),
