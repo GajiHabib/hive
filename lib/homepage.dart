@@ -1,58 +1,53 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive/hive.dart';
+import 'package:hiveapp/componets/MyCard.dart';
+import 'package:hiveapp/componets/Mydrowar.dart';
+import 'package:hiveapp/componets/floting.dart';
+import 'package:hiveapp/componets/notenotfaund.dart';
 
-class homepage extends StatefulWidget {
-  const homepage({super.key});
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<homepage> createState() => _homepageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _homepageState extends State<homepage> {
-  String?name;
-  var box=Hive.openBox('name_box');
+class _HomePageState extends State<HomePage> {
+  var box = Hive.box('note');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: AppBar(title: Center(child: Text('Hive App')),),
-     body: Padding(
-       padding: const EdgeInsets.all(8.0),
-       child: Column(children: [
-        SizedBox(height: 40,),
-        Row(children: [
-          Expanded(child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Entar your text'
-            ),
-            onChanged: ( String value) {
-              name=value;
-            },
-          )),
-          IconButton(onPressed: () {
-             if (name != null) {
-                        box.add(name);
-                        print('$name is Added into HiveBox');
-              setState(() {
-                
-              });
-            }
-          }, icon: Icon(Icons.send))
-        ],),
-        Expanded(child: ListView.builder(
-          itemCount: box.length,
-          itemBuilder:(context, index) {
-          var name=box.getAt(index);
-          return Card(
-            child: Center(child: Text('$name'),),
-          );
-        },))
-       ],),
-
-     ),
-
+      floatingActionButton: const MyFloatingButton(),
+      drawer: const MyDrawer(),
+      appBar: AppBar(
+        title: const Text("Hive App"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            box.isEmpty
+                ? const NoteNotFoundWidget()
+                : Expanded(
+                    child: ListView.builder(
+                        itemCount: box.length,
+                        itemBuilder: (context, index) {
+                          Map noteMap = box.getAt(index);
+                          return NoteCard(
+                            noteMap: noteMap,
+                            index: index,
+                            onDelete: () {
+                              setState(() {});
+                            },
+                          );
+                        }),
+                  )
+          ],
+        ),
+      ),
     );
   }
 }
